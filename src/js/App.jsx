@@ -3,7 +3,6 @@ import queryString from 'query-string';
 import FloorMap from './FloorMap';
 import HeaderBar from './HeaderBar';
 import ActionBar from './ActionBar';
-import GoogleCalendar from './GoogleCalendar';
 import NavigationToolbar from './NavigationToolbar';
 
 class App extends React.Component {
@@ -35,7 +34,6 @@ class App extends React.Component {
                     <ActionBar onClose={this.onCloseHandler} location={pin} />
                     : null
                 }
-                <GoogleCalendar/>
             </div>
         );
     }
