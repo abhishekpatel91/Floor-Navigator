@@ -22,11 +22,11 @@ function createFloorCanvas(canvas, floorPlan) {
             const bgColor = block.color || entityStyle;
 
             canvas
-                .rect(+block.x, +block.y, width, height, {
-                    background: bgColor,
-                    border: '1px solid #000'
-                })
-                .draw();
+                .rect(+block.x, +block.y, width, height)
+                .attr({
+                    fill: bgColor,
+                    stroke: '#000'
+                });
         });
     }
 }
@@ -40,7 +40,7 @@ export default class FloorMap extends React.PureComponent {
     componentDidMount() {
         // const canvas = initCanvas(this.canvasRef.current);
 
-        const canvas = initCanvas('.canvas-class');
+        const canvas = Raphael(0, 0, 3000, 4000);
         createFloorCanvas(canvas, floorPlan);
     }
 
