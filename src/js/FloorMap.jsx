@@ -114,11 +114,17 @@ export default class FloorMap extends React.PureComponent {
 
                 const m = (y2 - y1) / (x2 - x1);
                 if (Number.isFinite(m)) {
-                    const c1 = y1 - m * x1;
-                    const c2 = y + x / m;
-                    point = {
-                        x: (c2 - c1) / (m * m + 1),
-                        y: (m * m * c1 + m * c2) / (m * m + 1)
+                    if (m !== 0) {
+                        const c2 = y + x / m;
+                        point = {
+                            x: (c2 - c1) / (m * m + 1),
+                            y: (m * m * c1 + m * c2) / (m * m + 1)
+                        }
+                    } else {
+                        point = {
+                            x,
+                            y: y1
+                        }
                     }
                 } else {
                     point = {
