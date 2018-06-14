@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { VelocityComponent } from 'velocity-react';
-
+import Search from '../Search';
 import config from '../common/config';
 
 const Holder = styled.section`
@@ -57,8 +57,31 @@ const NavBox = styled.div`
 `;
 
 export default class NavigationToolbar extends React.PureComponent {
-    componentDidMount() {
+    constructor(props) {
+        super(props);
+        this.state = {
+            searchOpen: false,
+            type: null
+        }
     }
+
+    toggleSearch = () => {
+        this.setState(state => ({searchOpen: !state.searchOpen}));
+    }
+
+    editField = (type) => {
+        this.setState({ type }, this.toggleSearch);
+    }
+
+    redirect = (type, id) => {
+        const obj = {
+            from: this.props.from,
+            to: this.props.to
+        };
+        obj[this.state.type] = `${type},${id}`;
+        this.props.onDirectionsChange(obj.from, obj.to);
+    }
+
     render() {
         const { from, to } = this.props;
         const fromArr = from && from.split(',');
@@ -84,16 +107,21 @@ export default class NavigationToolbar extends React.PureComponent {
                             <i className="material-icons">
                                 my_location
                         </i>
-                            <NavBox>{fromArr && fromArr[1] || 'My Location'}</NavBox>
+                            <NavBox onClick={() => this.editField('from')}>{fromArr && fromArr[1] || 'My Location'}</NavBox>
                         </NavSection>
                         <NavSection>
                             <i className="material-icons">
                                 location_on
                         </i>
-                            <NavBox>{toArr && toArr[1]}</NavBox>
+                            <NavBox onClick={() => this.editField('to')}>{toArr && toArr[1]}</NavBox>
                         </NavSection>
                     </NavHolder>
                 </Holder>
+                {
+                    this.state.searchOpen ?
+                        <Search onItemSelect={this.redirect} onClose={this.toggleSearch} />
+                        : null
+                }
             </VelocityComponent>
         )
     }
