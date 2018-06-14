@@ -1,11 +1,26 @@
 import React from 'react';
 
 import FloorMap from './FloorMap';
+import HeaderBar from './HeaderBar';
+import ActionBar from './ActionBar';
 
 class App extends React.Component {
+    state = {
+        actionBarData: null
+    };
+
+    handleOpenActionBar = (data) => {
+        this.setState({
+            actionBarData: data,
+        });
+    }
     render() {
         return (
-            <FloorMap />
+            <div>
+                <HeaderBar />
+                <FloorMap handleOpenActionBar={this.handleOpenActionBar} />
+                <ActionBar data={this.state.actionBarData} handleOpenActionBar={this.handleOpenActionBar}/>
+            </div>
         );
     }
 }

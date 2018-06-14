@@ -133,7 +133,8 @@ const devConfig = merge.smart(common, {
     devServer: {
         hot: true,
         historyApiFallback: true,
-        host: 'kamikaze-floor-navigator.com',
+        disableHostCheck: true,
+        host: '0.0.0.0',
         inline: true,
         open: true,
     }

@@ -1,12 +1,21 @@
-body {
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500');
+
+*{
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+}
+
+body {    
+    font-family: Roboto, sans-serif;
+    overflow: hidden;
 }
 .container {
     width: 100vw;
-    background: aliceblue;
     height: 100vh;
-    overflow: scroll;
+    overflow: auto;
+    background: #D8E4BC;
+    padding: 80px 20px;
 }
 .canvas-class {
     width: 3335px;
