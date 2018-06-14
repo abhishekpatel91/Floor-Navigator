@@ -6,6 +6,7 @@ import './index.scss';
 const Holder = styled.section`
     background: white;    
     display: flex;
+    z-index: 1;
     position: fixed;
     width: calc(100% - 20px);
     margin: 10px;
