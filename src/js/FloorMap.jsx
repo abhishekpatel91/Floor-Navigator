@@ -37,6 +37,7 @@ function createFloorCanvas(canvas, floorPlan) {
                 background: bgColor,
                 border: '1px solid #000'
             })
+            .text(`${block.id}`, parseInt(block.x) + parseInt(width)/2, parseInt(block.y) + parseInt(height)/2, textStyle)
             .draw();
         });
     }
@@ -51,10 +52,11 @@ function createPaths(canvas, entity) {
 
         canvas
         .line({x : x1, y: y1}, {x : x2, y: y2}, {
-            border: '5px dashed #c83349'
+            border: '5px dashed #c83349',
+            zIndex: 1
         })
-        .text(`${x1}, ${y1}`, x1, y1, textStyle)
-        .text(`${x2}, ${y2}`, x2, y2, textStyle)
+        // .text(`${x1}, ${y1}`, x1, y1, textStyle)
+        // .text(`${x2}, ${y2}`, x2, y2, textStyle)
         .draw();
     });
 }
