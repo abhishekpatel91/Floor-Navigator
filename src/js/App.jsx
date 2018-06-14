@@ -3,6 +3,7 @@ import React from 'react';
 import FloorMap from './FloorMap';
 import HeaderBar from './HeaderBar';
 import ActionBar from './ActionBar';
+import NavigationToolbar from './NavigationToolbar';
 
 class App extends React.Component {
     state = {
@@ -17,6 +18,7 @@ class App extends React.Component {
     render() {
         return (
             <div>
+                <NavigationToolbar />
                 <HeaderBar />
                 <FloorMap handleOpenActionBar={this.handleOpenActionBar} />
                 <ActionBar data={this.state.actionBarData} handleOpenActionBar={this.handleOpenActionBar}/>
