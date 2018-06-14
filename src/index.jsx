@@ -17,7 +17,6 @@ const render = () => {
             <div>
                 <GoogleCalendar/>
                 <Switch>
-                    <Route path="/search" component={Search} />
                     <Route path="/events" component={Events} />
                     <Route path="/" component={App} />
                 </Switch>

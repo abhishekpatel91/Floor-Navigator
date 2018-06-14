@@ -31,11 +31,6 @@ const SearchInput = styled.input`
 
 
 export default class HeaderBar extends React.PureComponent {
-    componentDidMount() {
-        if (this.props.shouldFocusSearch && this.searchRef) {
-            this.searchRef.focus();
-        }
-    }
     render() {
         return (
             <Holder>
@@ -58,7 +53,6 @@ export default class HeaderBar extends React.PureComponent {
                 <SearchInput
                     onClick={this.props.onSearchClick}
                     type="search"
-                    innerRef={ref => this.searchRef = ref}
                     placeholder="Search workstation, meeting room etc"
                 />
             </Holder>
