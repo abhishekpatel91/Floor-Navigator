@@ -3,11 +3,12 @@ body {
     padding: 0;
 }
 .container {
-    width: 100%;
+    width: 100vw;
+    background: aliceblue;
     height: 100vh;
     overflow: scroll;
 }
 .canvas-class {
-    width: 1680px;
-    height: 1390px;
+    width: 3000px;
+    height: 3000px;
 }
