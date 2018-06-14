@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { VelocityComponent } from 'velocity-react';
+import floorPlan from '../common/floorPlan';
 
 import './index.scss';
 
@@ -58,14 +59,21 @@ export default class ActionBar extends React.PureComponent {
     }
 
     hideBar = () => {
-        this.props.handleOpenActionBar(null);
+        this.props.onClose();
     }
 
     render() {
-        const { data } = this.props;
+        const { location } = this.props;
+        const [type, id] = location.split(',');
+        const data = (floorPlan.map[type] || []).find(item => item.id === id);
+
+        if (!data) {
+            return null;
+        }
+
         return (
             <VelocityComponent
-                animation={!!this.props.data ? {
+                animation={!!data ? {
                     translateY: 0
                 } : {
                         translateY: '20vh'
@@ -75,9 +83,9 @@ export default class ActionBar extends React.PureComponent {
             >
                 <Holder>
                     <InfoSection>
-                        <AreaId><strong>Id: </strong>{data && data.area.id}</AreaId>
-                        <AreaType><strong>Type: </strong>{data && data.type}</AreaType>
-                        {data && data.area.name && <Name><strong>Name: </strong>{data.area.name}</Name>}
+                        <AreaId><strong>Id: </strong>{data && data.id}</AreaId>
+                        <AreaType><strong>Type: </strong>{type}</AreaType>
+                        {data && (data.name || data.id) && <Name><strong>Name: </strong>{data.name || data.id}</Name>}
                     </InfoSection>
                     <ActionPanel>
                         <DirectionsButton type="button" className="material">Directions</DirectionsButton>

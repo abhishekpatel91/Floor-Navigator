@@ -19,13 +19,10 @@ export default class FloorMap extends React.PureComponent {
 
     handleTileClick = (event, area, type) => {
         console.log(event, area, type);
-        this.props.handleOpenActionBar({
-            type: this.camelToSentenceCase(type),
-            area: {
-                ...area,
-                id: type === 'meetingRooms' ? `C-07-8P-${area.id}` : `C-07-WS-${area.id}`,
-            }
-        })
+        this.props.onMapClick(
+            type,
+            area.id
+        );
     }
 
     createFloorCanvas = (canvas, floorPlan) => {
