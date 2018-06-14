@@ -19,23 +19,31 @@ class App extends React.Component {
         this.props.history.push(`/`);
     }
 
+    openDirections = (from, to) => {
+        this.props.history.push(`/#page=direction&from=${from}&to=${to}`);
+    }
+
+    goBack = () => {
+        this.props.history.goBack();
+    }
+
     render() {
         const { pin, page, from, to } = queryString.parse(this.props.location.hash);
         return (
             <div>
-                {
-                    page === 'direction' ?
-                    <NavigationToolbar from={from} to={to} />
-                    : null
-                }
+                <NavigationToolbar page={page} from={from} to={to} goBack={this.goBack} />
                 <HeaderBar onSearchClick={this.onSearchClickHandler} />
-                <FloorMap onMapClick={this.onMapClickHandler}/>
+                <FloorMap onMapClick={this.onMapClickHandler} />
                 {
                     page === 'location' ?
-                    <ActionBar onClose={this.onCloseHandler} location={pin} />
-                    : null
+                        <ActionBar
+                            onClose={this.onCloseHandler}
+                            location={pin}
+                            openDirections={this.openDirections}
+                        />
+                        : null
                 }
-                <GoogleCalendar/>
+                <GoogleCalendar />
             </div>
         );
     }

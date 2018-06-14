@@ -19,8 +19,16 @@ const Holder = styled.section`
 
 const LeftArrow = styled.section`
     padding: 20px;
-    padding-top: 30px;
-    padding-right: 30px;
+    padding-top: 20px;
+    padding-right: 20px;
+    cursor: pointer;
+    >i {
+        padding: 10px;
+        border-radius: 50%;
+        &:hover {
+            background: rgba(0,0,0,0.3);
+        }
+    }
 `;
 
 const NavSection = styled.section`
@@ -52,38 +60,41 @@ export default class NavigationToolbar extends React.PureComponent {
     componentDidMount() {
     }
     render() {
+        const { from, to } = this.props;
+        const fromArr = from && from.split(',');
+        const toArr = to && to.split(',');
         return (
             <VelocityComponent
-                animation={true ? {
+                animation={ this.props.page === 'direction' ? {
                     translateY: 0
                 } : {
-                        translateY: '-100%'
+                        translateY: '-200px'
                     }}
                 duration={300}
                 easing='easeOutQuint'
             >
-            <Holder>
-                <LeftArrow>
-                    <i className="material-icons">
-                        arrow_back
+                <Holder>
+                    <LeftArrow >
+                        <i className="material-icons" onClick={this.props.goBack}>
+                            arrow_back
                     </i>
-                </LeftArrow>
-                <NavHolder>
-                    <NavSection>
-                        <i className="material-icons">
-                            my_location
+                    </LeftArrow>
+                    <NavHolder>
+                        <NavSection>
+                            <i className="material-icons">
+                                my_location
                         </i>
-                        <NavBox>My Location</NavBox>
-                    </NavSection>
-                    <NavSection>
-                        <i className="material-icons">
-                            location_on
+                            <NavBox>{fromArr && fromArr[1] || 'My Location'}</NavBox>
+                        </NavSection>
+                        <NavSection>
+                            <i className="material-icons">
+                                location_on
                         </i>
-                        <NavBox>Cubbon Park</NavBox>
-                    </NavSection>
-                </NavHolder>
+                            <NavBox>{toArr && toArr[1]}</NavBox>
+                        </NavSection>
+                    </NavHolder>
                 </Holder>
-            </VelocityComponent>    
+            </VelocityComponent>
         )
     }
 }

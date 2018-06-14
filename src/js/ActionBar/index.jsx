@@ -62,6 +62,10 @@ export default class ActionBar extends React.PureComponent {
         this.props.onClose();
     }
 
+    openDirections = (type, data) => () => {
+        this.props.openDirections(undefined, `${type},${data.id}`);
+    }
+
     render() {
         const { location } = this.props;
         const [type, id] = location.split(',');
@@ -88,7 +92,9 @@ export default class ActionBar extends React.PureComponent {
                         {data && (data.name || data.id) && <Name><strong>Name: </strong>{data.name || data.id}</Name>}
                     </InfoSection>
                     <ActionPanel>
-                        <DirectionsButton type="button" className="material">Directions</DirectionsButton>
+                        <DirectionsButton type="button" className="material" onClick={this.openDirections(type, data)}>
+                            Directions
+                        </DirectionsButton>
                     </ActionPanel>
                     <button type="button" className="close" onClick={this.hideBar} />
                 </Holder>
