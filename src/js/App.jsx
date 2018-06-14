@@ -3,6 +3,7 @@ import React from 'react';
 import FloorMap from './FloorMap';
 import HeaderBar from './HeaderBar';
 import ActionBar from './ActionBar';
+import GoogleCalendar from './GoogleCalendar';
 
 class App extends React.Component {
     state = {
@@ -20,6 +21,7 @@ class App extends React.Component {
                 <HeaderBar />
                 <FloorMap handleOpenActionBar={this.handleOpenActionBar} />
                 <ActionBar data={this.state.actionBarData} handleOpenActionBar={this.handleOpenActionBar}/>
+                <GoogleCalendar/>
             </div>
         );
     }

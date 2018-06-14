@@ -18,7 +18,6 @@ export default class FloorMap extends React.PureComponent {
     }
 
     handleTileClick = (event, area, type) => {
-        console.log(event, area, type);
         this.props.handleOpenActionBar({
             type: this.camelToSentenceCase(type),
             area: {
