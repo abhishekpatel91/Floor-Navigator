@@ -57,7 +57,8 @@ const ListItem = styled.section`
 
 export default class NavigationToolbar extends React.PureComponent {
     state = {
-        recentSearches: []
+        recentSearches: [],
+        searchResults: []
     }
 
     componentDidMount() {
@@ -78,11 +79,38 @@ export default class NavigationToolbar extends React.PureComponent {
         this.storeInLocalStorage(entity);
     }
 
+    handleSearchChange = (event) => {
+        const val = event.target.value;
+        let searchResults = [];
+        if (val) {
+            const meetingFilterResults = floorPlan.map.meetingRooms.filter(m => m.id.includes(val) || m.name.includes(val));
+            if (meetingFilterResults) {
+                searchResults = searchResults.concat(meetingFilterResults);
+            }
+
+            const workstationsFilterResults = floorPlan.map.workStations.filter(m => m.id.includes(val));
+            if (workstationsFilterResults) {
+                searchResults = searchResults.concat(workstationsFilterResults);
+            }
+        }
+        this.setState({
+            searchResults
+        });
+    }
+
     render() {
         return (
             <Holder>
-                <SearchInput placeholder="Type meeting room, workstation" />
-                <RecentSearches>
+                <SearchInput placeholder="Type meeting room, workstation" onChange={this.handleSearchChange} />
+                {this.state.searchResults.length > 0 && 
+                    this.state.searchResults.map(res => {
+                    return (
+                        <ListItem key={res.id}>
+                            <p> {res.name || res.id} </p>
+                        </ListItem>
+                    )
+                })}
+                {this.state.searchResults.length === 0 && <RecentSearches>
                     <ListItemGroup>
                         <GroupHeader>Recent Searches</GroupHeader>
                         {this.state.recentSearches.map(rs => {
@@ -90,14 +118,14 @@ export default class NavigationToolbar extends React.PureComponent {
                                 <ListItem key={rs.id}>
                                     <i className="material-icons">
                                         history
-                            </i>
+                                    </i>
                                     <p> {rs.name || rs.id} </p>
                                 </ListItem>
                             )
                         })}
                     </ListItemGroup>
-                </RecentSearches>
-                <AreasList>
+                </RecentSearches>}
+                {this.state.searchResults.length === 0 && <AreasList>
                     <ListItemGroup>
                         <GroupHeader>Meeting Rooms</GroupHeader>
                         {floorPlan.map.meetingRooms.map(meetingRoom => {
@@ -137,7 +165,7 @@ export default class NavigationToolbar extends React.PureComponent {
                             );
                         })}
                     </ListItemGroup>
-                </AreasList>
+                </AreasList>}
             </Holder>
         )
     }
