@@ -2,6 +2,13 @@ import React from 'react';
 
 import floorPlan from './common/floorPlan';
 
+const textStyle = {
+    fontSize: '80px',
+    color: '#000',
+    zIndex: 1000,
+    align: 'center',
+}
+
 function initCanvas(elm, background = '#dcdcdc') {
     return origami(elm)
         .background(background);
@@ -16,19 +23,42 @@ function createFloorCanvas(canvas, floorPlan) {
         const entityDimensions = dimensions[key];
         const entityStyle = fillColor[key]
 
+        if (key === 'paths') {
+            createPaths(canvas, entity);
+        }
+
         entity.forEach(block => {
             const width = block.width || entityDimensions[0];
             const height = block.height || entityDimensions[1];
             const bgColor = block.color || entityStyle;
 
             canvas
-                .rect(+block.x, +block.y, width, height, {
-                    background: bgColor,
-                    border: '1px solid #000'
-                })
-                .draw();
+            .rect(+block.x, +block.y, width, height, {
+                background: bgColor,
+                border: '1px solid #000'
+            })
+            .text(`${block.id}`, parseInt(block.x) + parseInt(width)/2, parseInt(block.y) + parseInt(height)/2, textStyle)
+            .draw();
         });
     }
+}
+
+function createPaths(canvas, entity) {
+    entity.forEach((block) => {
+        const x1 = +block.x1;
+        const x2 = +block.x2;
+        const y1 = +block.y1;
+        const y2 = +block.y2;
+
+        canvas
+        .line({x : x1, y: y1}, {x : x2, y: y2}, {
+            border: '5px dashed #c83349',
+            zIndex: 1
+        })
+        // .text(`${x1}, ${y1}`, x1, y1, textStyle)
+        // .text(`${x2}, ${y2}`, x2, y2, textStyle)
+        .draw();
+    });
 }
 
 export default class FloorMap extends React.PureComponent {
@@ -38,8 +68,6 @@ export default class FloorMap extends React.PureComponent {
     }
 
     componentDidMount() {
-        // const canvas = initCanvas(this.canvasRef.current);
-
         const canvas = initCanvas('.canvas-class');
         createFloorCanvas(canvas, floorPlan);
     }
