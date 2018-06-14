@@ -66,6 +66,60 @@ function createPaths(canvas, entity) {
     });
 }
 
+/**
+ * Returns the path and nearest point on that path
+ * to the given entity.
+ * Returned object is of following format
+ *  {
+ *      path: { x, y }
+ *      selectedPath: { x1, y1, x2, y2 }
+ *  }
+ *
+ * @param {*} entity
+ * @param {*} paths
+ */
+function findNearestPath(entity, paths) {
+    const x = parseInt(entity.x),
+        y = parseInt(entity.y);
+    let d = Number.MAX_SAFE_INTEGER;
+    let selectedPath, point;
+
+    for (let path of paths) {
+        const x1 = parseInt(path.x1),
+        y1 = parseInt(path.y1),
+        x2 = parseInt(path.x2),
+        y2 = parseInt(path.y2);
+
+        const distance = Math.abs((y2 - y1) * x - (x2 - x1) * y + x2 * y1 - y2 * x1) /
+            Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1 ) * (x2 - x1));
+        if (distance < d) {
+            d = distance;
+            selectedPath = path;
+
+            const m = (y2 - y1)/(x2 - x1);
+            if (Number.isFinite(m)) {
+                const c1 = y1 - m * x1;
+                const c2 = y + x / m;
+                point = {
+                    x: (c2 - c1) / (m * m + 1),
+                    y: (m * m * c1 + m * c2) / (m * m + 1)
+                }
+            } else {
+                point = {
+                    x: x1,
+                    y: y
+                }
+            }
+
+        }
+    }
+
+    return {
+        point,
+        selectedPath
+    }
+}
+
 export default class FloorMap extends React.PureComponent {
     constructor(props) {
         super(props);
