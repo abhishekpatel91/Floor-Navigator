@@ -77,6 +77,7 @@ export default class NavigationToolbar extends React.PureComponent {
 
     handleListItemClick = (type, entity) => () => {
         this.storeInLocalStorage(entity);
+        this.props.history.push(`/#page=location&pin=${type},${entity.id}`);
     }
 
     handleSearchChange = (event) => {
@@ -130,7 +131,7 @@ export default class NavigationToolbar extends React.PureComponent {
                         <GroupHeader>Meeting Rooms</GroupHeader>
                         {floorPlan.map.meetingRooms.map(meetingRoom => {
                             return (
-                                <ListItem key={meetingRoom.id} onClick={this.handleListItemClick('meetingRoom', meetingRoom)}>
+                                <ListItem key={meetingRoom.id} onClick={this.handleListItemClick('meetingRooms', meetingRoom)}>
                                     <i className="material-icons">
                                         meeting_room
                                     </i>

@@ -1,5 +1,6 @@
 import React from 'react';
 import floorPlan from './common/floorPlan';
+import Hammer from 'hammerjs';
 
 const pathStyle = {
     'stroke': '#c83349',
@@ -18,14 +19,10 @@ export default class FloorMap extends React.PureComponent {
     }
 
     handleTileClick = (event, area, type) => {
-        console.log(event, area, type);
-        this.props.handleOpenActionBar({
-            type: this.camelToSentenceCase(type),
-            area: {
-                ...area,
-                id: type === 'meetingRooms' ? `C-07-8P-${area.id}` : `C-07-WS-${area.id}`,
-            }
-        })
+        this.props.onMapClick(
+            type,
+            area.id
+        );
     }
 
     createFloorCanvas = (canvas, floorPlan) => {
@@ -145,12 +142,30 @@ export default class FloorMap extends React.PureComponent {
     componentDidMount() {
         const canvas = Raphael(this.containerRef.current, 3335, 4040);
         this.createFloorCanvas(canvas, floorPlan);
+
+        this.hammer = new Hammer(this.containerRef.current);
+        this.hammer.get('pinch').set({ enable: true });
+        this.hammer.on('pan', event => {
+            if (this.left === undefined)
+                this.left = this.containerRef.current.scrollLeft;
+            if (this.top === undefined)
+                this.top = this.containerRef.current.scrollTop;
+
+            this.containerRef.current.scrollTo(this.left - event.deltaX, this.top - event.deltaY);
+
+            if (event.isFinal) {
+                this.left = undefined;
+                this.top = undefined;
+            }
+        });
     }
 
     render() {
         return (
-            <div className="container" ref={this.containerRef}>
-            </div>
+            <React.Fragment>
+                <div className="container" style={{ overflow: 'hidden' }} ref={this.containerRef}>
+                </div>
+            </React.Fragment>
         );
     }
 }
