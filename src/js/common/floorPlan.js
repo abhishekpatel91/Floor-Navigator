@@ -1,4 +1,4 @@
-window.floorPlan = {
+const floorPlan = {
     'meta': {
         'color': {
             'workStations': '#e3eaa7',
@@ -202,3 +202,4 @@ window.floorPlan = {
         }]
     }
 }
+export default floorPlan;
