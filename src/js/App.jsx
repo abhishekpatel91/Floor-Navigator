@@ -1,11 +1,17 @@
 import React from 'react';
 
 import FloorMap from './FloorMap';
+import HeaderBar from './HeaderBar';
+import ActionBar from './ActionBar';
 
 class App extends React.Component {
     render() {
         return (
-            <FloorMap />
+            <div>
+                <HeaderBar />
+                <FloorMap />
+                <ActionBar />
+            </div>
         );
     }
 }
