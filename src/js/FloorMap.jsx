@@ -1,11 +1,9 @@
 import React from 'react';
-
 import floorPlan from './common/floorPlan';
-const textStyle = {
-    fontSize: '80px',
-    color: '#000',
-    zIndex: 1000,
-    align: 'center',
+
+const pathStyle = {
+    'stroke': '#c83349',
+    'stroke-width': 5
 }
 
 export default class FloorMap extends React.PureComponent {
@@ -40,7 +38,7 @@ export default class FloorMap extends React.PureComponent {
             const entityStyle = fillColor[key]
 
             if (key === 'paths') {
-                this.createPaths(canvas, entity);
+                this.createPaths(canvas, entity, pathStyle);
             }
 
             entity.forEach(block => {
@@ -70,7 +68,7 @@ export default class FloorMap extends React.PureComponent {
         }
     }
 
-    createPaths = (canvas, entity) => {
+    createPaths = (canvas, entity, pathStyle) => {
         entity.forEach((block) => {
             const x1 = block.x1;
             const x2 = block.x2;
@@ -78,14 +76,8 @@ export default class FloorMap extends React.PureComponent {
             const y2 = block.y2;
 
             canvas.path(`M${x1} ${y1}L${x2} ${y2}Z`)
-                .attr({
-                    'stroke': '#c83349',
-                    'stroke-dasharray': '.',
-                    'stroke-width': 5
-                });
+                .attr(pathStyle);
 
-            // .text(`${x1}, ${y1}`, x1, y1, textStyle)
-            // .text(`${x2}, ${y2}`, x2, y2, textStyle)
 
         });
     }
