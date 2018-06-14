@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { VelocityComponent, VelocityTransitionGroup } from 'velocity-react';
+import { VelocityComponent } from 'velocity-react';
 
 import './index.scss';
 
