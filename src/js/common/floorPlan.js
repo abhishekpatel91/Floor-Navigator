@@ -10,7 +10,8 @@ const floorPlan = {
             'workStations': [106, 93],
             'areas': [181, 207],
             'pantry': [106, 93],
-            'meetingRooms': []
+            'paths': [10, 10],
+            'meetingRooms': [293, 233]
         }
     },
     'floor': 7,
@@ -42,8 +43,7 @@ const floorPlan = {
                 "x": "306",
                 "y": "94",
                 "width": "106",
-                "height": "93",
-                "__EMPTY_4": "``"
+                "height": "93"
             },
             {
                 "id": "177",

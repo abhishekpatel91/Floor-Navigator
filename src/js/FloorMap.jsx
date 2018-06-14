@@ -22,7 +22,7 @@ function createFloorCanvas(canvas, floorPlan) {
             const bgColor = block.color || entityStyle;
 
             canvas
-                .rect(block.x, block.y, width, height, {
+                .rect(+block.x, +block.y, width, height, {
                     background: bgColor,
                     border: '1px solid #000'
                 })
