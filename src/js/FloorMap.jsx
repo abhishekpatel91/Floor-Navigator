@@ -1,7 +1,6 @@
 import React from 'react';
 
 import floorPlan from './common/floorPlan';
-
 const textStyle = {
     fontSize: '80px',
     color: '#000',
