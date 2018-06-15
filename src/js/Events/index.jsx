@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import floorPlan from '../common/floorPlan';
 
 const NoData = styled.div`
     display: flex;
@@ -26,12 +27,16 @@ const ListItem = styled.section`
     align-items: center;
     cursor: pointer;
     transition: 0.3s;
-    font-size: 14px;
+    font-size: 13px;
     &:hover {
         background: rgba(0,0,0,0.1);
     }
     &:last-of-type {
         border-bottom: none;
+    }
+    &.disabled {
+        color: #aaa;
+        pointer-events: none;
     }
 `;
 
@@ -74,19 +79,38 @@ export default class Events extends React.PureComponent {
         return (new Date(d)).toLocaleDateString();
     }
 
+    handleEventClick = (id, event) => () => {
+        this.props.history.push({
+            pathname: '/',
+            hash: `page=location&pin=meetingRooms,${id}`,
+            state: { event }
+        });
+    }
+
     render() {
+        const meetingRooms = floorPlan.map.meetingRooms;
         return (
             !this.state.eventsData.length ?
             <NoData>No Data Available</NoData> :
             <ListItemGroup>
                 <GroupHeader>Events</GroupHeader>
-                {this.state.eventsData.map((event) => (
-                    <ListItem key={event.id}>
-                        {event.summary}
-                        &nbsp;
-                        <SmallText>{`on ${this.formatDate(event.start.dateTime)}`}</SmallText>
-                    </ListItem>
-                ))}
+                {this.state.eventsData.map((event) => {
+                    const location = event.location && (event.location).toLowerCase();
+                    const meetingRoom = location && meetingRooms.find((room) => 
+                        location.indexOf((room.name).toLowerCase()) > -1
+                    );
+                    return (
+                        <ListItem
+                            key={event.id}
+                            className={meetingRoom ? '' : 'disabled'}
+                            onClick={this.handleEventClick(meetingRoom && meetingRoom.id, event)}
+                        >
+                            {event.summary}
+                            &nbsp;
+                            <SmallText>{`on ${this.formatDate(event.start.dateTime)}`}</SmallText>
+                        </ListItem>
+                    );
+                })}
             </ListItemGroup>
         );
     }

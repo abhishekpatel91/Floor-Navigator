@@ -53,6 +53,7 @@ class App extends React.Component {
                             onClose={this.onCloseHandler}
                             location={pin}
                             openDirections={this.openDirections}
+                            pathLocation={this.props.location}
                         />
                         : null
                 }
