@@ -103,7 +103,7 @@ export default class NavigationToolbar extends React.PureComponent {
 
             const workstationsFilterResults = floorPlan.map.workStations.filter(m => m.id.includes(val));
             if (workstationsFilterResults) {
-                searchResults = searchResults.concat(workstationsFilterResults.map(res => ({...res, type: 'workstation'})));
+                searchResults = searchResults.concat(workstationsFilterResults.map(res => ({...res, type: 'workStations'})));
             }
         }
         this.setState({
@@ -118,7 +118,7 @@ export default class NavigationToolbar extends React.PureComponent {
                 {this.state.searchResults.length > 0 && 
                     this.state.searchResults.map(res => {
                     return (
-                        <ListItem key={res.id}>
+                        <ListItem key={res.id} onClick={this.handleListItemClick(res.type, res)}>
                             <p> {res.name || res.id} </p>
                         </ListItem>
                     )
