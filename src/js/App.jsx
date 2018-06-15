@@ -50,7 +50,7 @@ class App extends React.Component {
                         <Search onItemSelect={this.navigateToPin} onClose={this.toggleSearch} />
                         : null
                 }
-                <FloorMap location={this.props.location} onMapClick={this.navigateToPin}/>
+                <FloorMap boundary={pin || from} location={this.props.location} onMapClick={this.navigateToPin}/>
                 {
                     page === 'location' ?
                         <ActionBar

@@ -57,8 +57,41 @@ export default class FloorMap extends React.PureComponent {
     constructor(props) {
         super(props);
         this.containerRef = React.createRef();
-        this.setSizeThrottled = _.throttle(this.setSize, 500);
+        this.setZoomSizeThrottled = _.throttle(this.setZoomSize, 500);
         this.zoom = DEFAULT_ZOOM;
+        this.currentLeft = 1600;
+        this.currentRight = 2000;
+    }
+
+    componentDidMount() {
+        this.boundaryCalculation(this.props);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (this.props.boundary !== nextProps.boundary) {
+            this.boundaryCalculation(nextProps);
+        }
+    }
+
+    boundaryCalculation = (props) => {
+        let x = this.currentLeft;
+        let y = this.currentRight;
+        if (props.boundary) {
+            const entity = this.getEntityForBoundary(props.boundary);
+            x = entity.x;
+            y = entity.y;
+        }
+        this.fitBoundary(x, y);
+    }
+
+    getEntityForBoundary = (boundary) => {
+        const [type, id] = boundary.split(',');
+        return this.findEntity(id, floorPlan.map[type]);
+    }
+
+    fitBoundary(x, y) {
+        this.setZoomSize(4);
+        this.moveTo(Math.max(x - (window.innerWidth / 2), 0), Math.max(y - (window.innerHeight / 2), 0));
     }
 
     camelToSentenceCase = (str) => {
@@ -152,12 +185,16 @@ export default class FloorMap extends React.PureComponent {
         }
     }
 
-    setSize = (size) => {
+    setZoomSize = (size) => {
         this.zoom = Math.min(size, MAX_ZOOM);
-        this.zoom = Math.max(this.zoom, 1);
+        this.zoom = Math.max(this.zoom, 0);
         if (this.canvas) {
             this.canvas.setSize(leastSize.width + (partitionSize.width * this.zoom), leastSize.height + (partitionSize.height * this.zoom));
         }
+    }
+
+    moveTo = (x, y) => {
+        this.containerRef.current.scrollTo(x, y);
     }
 
     componentDidMount() {
@@ -173,9 +210,11 @@ export default class FloorMap extends React.PureComponent {
             if (this.top === undefined)
                 this.top = this.containerRef.current.scrollTop;
 
-            this.containerRef.current.scrollTo(this.left - event.deltaX, this.top - event.deltaY);
+            this.moveTo(this.left - event.deltaX, this.top - event.deltaY);
 
             if (event.isFinal) {
+                this.currentLeft = this.left;
+                this.currentRight = this.right;
                 this.left = undefined;
                 this.top = undefined;
             }
@@ -183,12 +222,12 @@ export default class FloorMap extends React.PureComponent {
 
         this.hammer.on('pinchin', event => {
             console.log('pinchin', event.scale, this.zoom);
-            this.setSizeThrottled(this.zoom - 2);
+            this.setZoomSizeThrottled(this.zoom - 2);
         });
 
         this.hammer.on('pinchout', event => {
             console.log('pinchout', event.scale, this.zoom);
-            this.setSizeThrottled(this.zoom + 2);
+            this.setZoomSizeThrottled(this.zoom + 2);
         });
         this.plotPath(this.props);
     }
@@ -204,8 +243,8 @@ export default class FloorMap extends React.PureComponent {
                 <div className="container" style={{ overflow: 'hidden' }} ref={this.containerRef}>
                 </div>
                 <ZoomButtons>
-                    <div className="button" onClick={() => this.setSize(this.zoom + 1)}>+</div>
-                    <div className="button" onClick={() => this.setSize(this.zoom - 1)}>-</div>
+                    <div className="button" onClick={() => this.setZoomSize(this.zoom + 1)}>+</div>
+                    <div className="button" onClick={() => this.setZoomSize(this.zoom - 1)}>-</div>
                 </ZoomButtons>
             </React.Fragment>
         );
