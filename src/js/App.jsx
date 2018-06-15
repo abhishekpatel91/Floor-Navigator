@@ -4,15 +4,22 @@ import FloorMap from './FloorMap';
 import HeaderBar from './HeaderBar';
 import ActionBar from './ActionBar';
 import GoogleCalendar from './GoogleCalendar';
+import Search from './Search';
 import NavigationToolbar from './NavigationToolbar';
 
 class App extends React.Component {
-    onMapClickHandler = (type, id) => {
+    constructor(props) {
+        super(props);
+        this.state = {
+            searchOpen: false
+        }
+    }
+    navigateToPin = (type, id) => {
         this.props.history.push(`/#page=location&pin=${type},${id}`);
     }
 
-    onSearchClickHandler = () => {
-        this.props.history.push(`/search`);
+    toggleSearch = () => {
+        this.setState(state => ({searchOpen: !state.searchOpen}));
     }
 
     onCloseHandler = () => {
@@ -20,7 +27,7 @@ class App extends React.Component {
     }
 
     openDirections = (from, to) => {
-        this.props.history.push(`/#page=direction&from=${from}&to=${to}`);
+        this.props.history.push(`/#page=direction&from=${from || 'areas,lift1'}&to=${to}`);
     }
 
     goBack = () => {
@@ -31,9 +38,15 @@ class App extends React.Component {
         const { pin, page, from, to } = queryString.parse(this.props.location.hash);
         return (
             <div>
-                <NavigationToolbar page={page} from={from} to={to} goBack={this.goBack} />
-                <HeaderBar onSearchClick={this.onSearchClickHandler} />
-                <FloorMap onMapClick={this.onMapClickHandler} />
+                <NavigationToolbar page={page} from={from} to={to} onDirectionsChange={this.openDirections} goBack={this.goBack} />
+                <HeaderBar onSearchClick={this.toggleSearch} />
+
+                {
+                    this.state.searchOpen ?
+                        <Search onItemSelect={this.navigateToPin} onClose={this.toggleSearch} />
+                        : null
+                }
+                <FloorMap onMapClick={this.navigateToPin}/>
                 {
                     page === 'location' ?
                         <ActionBar
@@ -43,7 +56,6 @@ class App extends React.Component {
                         />
                         : null
                 }
-                <GoogleCalendar />
             </div>
         );
     }

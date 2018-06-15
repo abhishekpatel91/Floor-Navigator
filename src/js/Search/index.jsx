@@ -8,7 +8,14 @@ import floorPlan from '../common/floorPlan';
 const MAX_RECENT_SEARCHES = 5;
 
 const Holder = styled.section`
-    
+    position: fixed;
+    z-index: 10;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    overflow: auto;
+    background: white;
 `;
 
 const SearchInput = styled.input`
@@ -65,6 +72,9 @@ export default class NavigationToolbar extends React.PureComponent {
         this.setState({
             recentSearches: JSON.parse(localStorage.getItem('recentSearches')) || []
         });
+        if (this.searchRef) {
+            this.searchRef.focus();
+        }
     }
 
     storeInLocalStorage = (entity) => {
@@ -76,8 +86,10 @@ export default class NavigationToolbar extends React.PureComponent {
     }
 
     handleListItemClick = (type, entity) => () => {
+        entity.type = type;
         this.storeInLocalStorage(entity);
-        this.props.history.push(`/#page=location&pin=${type},${entity.id}`);
+        this.props.onClose();
+        this.props.onItemSelect(type, entity.id);
     }
 
     handleSearchChange = (event) => {
@@ -86,12 +98,12 @@ export default class NavigationToolbar extends React.PureComponent {
         if (val) {
             const meetingFilterResults = floorPlan.map.meetingRooms.filter(m => m.id.includes(val) || m.name.includes(val));
             if (meetingFilterResults) {
-                searchResults = searchResults.concat(meetingFilterResults);
+                searchResults = searchResults.concat(meetingFilterResults.map(res => ({...res, type: 'meetingRooms'})));
             }
 
             const workstationsFilterResults = floorPlan.map.workStations.filter(m => m.id.includes(val));
             if (workstationsFilterResults) {
-                searchResults = searchResults.concat(workstationsFilterResults);
+                searchResults = searchResults.concat(workstationsFilterResults.map(res => ({...res, type: 'workstation'})));
             }
         }
         this.setState({
@@ -102,7 +114,7 @@ export default class NavigationToolbar extends React.PureComponent {
     render() {
         return (
             <Holder>
-                <SearchInput placeholder="Type meeting room, workstation" onChange={this.handleSearchChange} />
+                <SearchInput innerRef={ref => this.searchRef = ref} placeholder="Type meeting room, workstation" onChange={this.handleSearchChange} />
                 {this.state.searchResults.length > 0 && 
                     this.state.searchResults.map(res => {
                     return (
@@ -116,7 +128,7 @@ export default class NavigationToolbar extends React.PureComponent {
                         <GroupHeader>Recent Searches</GroupHeader>
                         {this.state.recentSearches.map(rs => {
                             return (
-                                <ListItem key={rs.id}>
+                                <ListItem key={rs.id}  onClick={this.handleListItemClick(rs.type, rs)}>
                                     <i className="material-icons">
                                         history
                                     </i>
