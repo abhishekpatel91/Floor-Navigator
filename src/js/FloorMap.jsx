@@ -34,7 +34,7 @@ const partitionSize = {
 const ZoomButtons = styled.div`
     position: fixed;
     right: 10px;
-    top: 100px;
+    top: 150px;
 
     .button {
         padding: 5px;
@@ -146,8 +146,8 @@ export default class FloorMap extends React.PureComponent {
                     findNearestPath(startNode, floorPlan.map.paths),
                     findNearestPath(endNode, floorPlan.map.paths)
                 );
-                this.createPaths(this.canvas, floorPlan.map.paths, pathStyle);
-                this.createPaths(this.canvas, calculatedPath, highlightedStye);
+                this.createPaths(floorPlan.map.paths, pathStyle);
+                this.createPaths(calculatedPath, highlightedStye);
             }
         }
     }
