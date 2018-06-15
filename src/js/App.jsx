@@ -11,11 +11,15 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            searchOpen: false
+            searchOpen: false,
+            region: null
         }
+        this.page = '';
     }
     navigateToPin = (type, id) => {
-        this.props.history.push(`/#page=location&pin=${type},${id}`);
+        if (this.page !== 'direction') {
+            this.props.history.push(`/#page=location&pin=${type},${id}`);
+        }
     }
 
     toggleSearch = () => {
@@ -36,6 +40,7 @@ class App extends React.Component {
 
     render() {
         const { pin, page, from, to } = queryString.parse(this.props.location.hash);
+        this.page = page;
         return (
             <div>
                 <NavigationToolbar page={page} from={from} to={to} onDirectionsChange={this.openDirections} goBack={this.goBack} />
