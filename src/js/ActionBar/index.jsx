@@ -4,6 +4,7 @@ import { VelocityComponent } from 'velocity-react';
 import floorPlan from '../common/floorPlan';
 
 import './index.scss';
+const BACKEND_HOST = 'http://localhost:8085';
 
 const Holder = styled.footer`
     background: #fff;
@@ -20,13 +21,18 @@ const Holder = styled.footer`
 `;
 
 const Name = styled.h4`
-    font-weight: normal;
+    font-weight: 500;
     margin-bottom: 10px;
+    text-transform: capitalize;
 `;
 
 const AreaType = styled.h4`
     font-weight: normal;
     margin-bottom: 10px;
+    font-size: 13px;
+    span {
+        color: #7f7f7f;
+    }
 `;
 const AreaId = styled.h4`
     font-weight: medium;
@@ -48,6 +54,11 @@ const DirectionsButton = styled.button`
     right: 0;
     bottom: 0;
 `;
+const BroadcastButton = styled.button`
+    position: absolute;
+    right: 180px;
+    bottom: 0;
+`;
 
 export default class ActionBar extends React.PureComponent {
     state = {
@@ -66,8 +77,24 @@ export default class ActionBar extends React.PureComponent {
         this.props.openDirections(undefined, `${type},${data.id}`);
     }
 
+    pushNotification = (type, data) => () => {
+        fetch(`${BACKEND_HOST}/push`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: data.id,
+                type
+            })
+        }).then(res => {
+            console.log('Notif sent');
+        })
+    }
+
     render() {
-        const { location } = this.props;
+        const { location, pathLocation } = this.props;
         const [type, id] = location.split(',');
         const data = (floorPlan.map[type] || []).find(item => item.id === id);
 
@@ -87,14 +114,18 @@ export default class ActionBar extends React.PureComponent {
             >
                 <Holder>
                     <InfoSection>
-                        <AreaId><strong>Id: </strong>{data && data.id}</AreaId>
-                        <AreaType><strong>Type: </strong>{type}</AreaType>
-                        {data && (data.name || data.id) && <Name><strong>Name: </strong>{data.name || data.id}</Name>}
+                        {data && (data.name || data.id) && <Name>{data.name || data.id}</Name>}
+                        {pathLocation.state && pathLocation.state.event &&
+                            <AreaType><span>Upcoming Event: </span>{pathLocation.state.event.summary}</AreaType>
+                        }
                     </InfoSection>
                     <ActionPanel>
                         <DirectionsButton type="button" className="material" onClick={this.openDirections(type, data)}>
                             Directions
                         </DirectionsButton>
+                        <BroadcastButton type="button" className="material" onClick={this.pushNotification(type, data)}>
+                            BroadCast
+                        </BroadcastButton>
                     </ActionPanel>
                     <button type="button" className="close" onClick={this.hideBar} />
                 </Holder>

@@ -45,23 +45,22 @@ class App extends React.Component {
             <div>
                 <NavigationToolbar page={page} from={from} to={to} onDirectionsChange={this.openDirections} goBack={this.goBack} />
                 <HeaderBar onSearchClick={this.toggleSearch} />
-
                 {
                     this.state.searchOpen ?
                         <Search onItemSelect={this.navigateToPin} onClose={this.toggleSearch} />
                         : null
                 }
-                <FloorMap highlight onMapClick={this.navigateToPin}/>
+                <FloorMap location={this.props.location} onMapClick={this.navigateToPin}/>
                 {
                     page === 'location' ?
                         <ActionBar
                             onClose={this.onCloseHandler}
                             location={pin}
                             openDirections={this.openDirections}
+                            pathLocation={this.props.location}
                         />
                         : null
                 }
-                <GoogleCalendar />
             </div>
         );
     }

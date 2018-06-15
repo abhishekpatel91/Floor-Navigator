@@ -1,12 +1,19 @@
 import React from 'react';
 import _ from 'lodash';
 import styled from 'styled-components';
+import queryString from 'query-string';
 import floorPlan from './common/floorPlan';
 import Hammer from 'hammerjs';
+import calcShortestPath, { findNearestPath } from './utils/shortestPath';
 
 const pathStyle = {
-    'stroke': '#c83349',
-    'stroke-width': 5
+    'stroke': '#f2f2f2',
+    'stroke-width': 25
+}
+
+const highlightedStye = {
+    'stroke': '#2274A5',
+    'stroke-width': 25
 }
 
 const floorSize = {
@@ -67,6 +74,8 @@ export default class FloorMap extends React.PureComponent {
     }
 
     createFloorCanvas = (floorPlan) => {
+        this.canvas.path('M 0 0 L 2378 0 L 2378 1450 L 3335 1450 L 3335 4040 L 0 4040 Z').attr('fill', '#D8E4BC')
+
         const { meta, map } = floorPlan;
         const { color: fillColor, dimensions } = meta;
 
@@ -106,6 +115,10 @@ export default class FloorMap extends React.PureComponent {
         }
     }
 
+    findEntity = (entityId, entityList) => {
+        return entityList.find(entity => entity.id === entityId);
+    }
+
     createPaths = (entity, pathStyle) => {
         entity.forEach((block) => {
             const x1 = block.x1;
@@ -120,63 +133,22 @@ export default class FloorMap extends React.PureComponent {
         });
     }
 
-    /**
-     * Returns the path and nearest point on that path
-     * to the given entity.
-     * Returned object is of following format
-     *  {
-     *      path: { x, y }
-     *      selectedPath: { x1, y1, x2, y2 }
-     *  }
-     *
-     * @param {*} entity
-     * @param {*} paths
-     */
-    findNearestPath = (entity, paths) => {
-        const x = parseInt(entity.x),
-            y = parseInt(entity.y);
-        let d = Number.MAX_SAFE_INTEGER;
-        let selectedPath, point;
-
-        for (let path of paths) {
-            const x1 = parseInt(path.x1),
-                y1 = parseInt(path.y1),
-                x2 = parseInt(path.x2),
-                y2 = parseInt(path.y2);
-
-            const distance = Math.abs((y2 - y1) * x - (x2 - x1) * y + x2 * y1 - y2 * x1) /
-                Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
-            if (distance < d) {
-                d = distance;
-                selectedPath = path;
-
-                const m = (y2 - y1) / (x2 - x1);
-                if (Number.isFinite(m)) {
-                    if (m !== 0) {
-                        const c2 = y + x / m;
-                        point = {
-                            x: (c2 - c1) / (m * m + 1),
-                            y: (m * m * c1 + m * c2) / (m * m + 1)
-                        }
-                    } else {
-                        point = {
-                            x,
-                            y: y1
-                        }
-                    }
-                } else {
-                    point = {
-                        x: x1,
-                        y: y
-                    }
-                }
-
+    plotPath = (props) => {
+        const { from, to } = queryString.parse(props.location.hash);
+        
+        if (from && to) {
+            const fromNode = from.split(',');
+            const toNode = to.split(',');
+            const startNode = this.findEntity(fromNode[1], floorPlan.map[fromNode[0]]);
+            const endNode = this.findEntity(toNode[1], floorPlan.map[toNode[0]]);            
+            if (startNode && endNode){
+                const calculatedPath = calcShortestPath(
+                    findNearestPath(startNode, floorPlan.map.paths),
+                    findNearestPath(endNode, floorPlan.map.paths)
+                );
+                this.createPaths(this.canvas, floorPlan.map.paths, pathStyle);
+                this.createPaths(this.canvas, calculatedPath, highlightedStye);
             }
-        }
-
-        return {
-            point,
-            selectedPath
         }
     }
 
@@ -218,6 +190,12 @@ export default class FloorMap extends React.PureComponent {
             console.log('pinchout', event.scale, this.zoom);
             this.setSizeThrottled(this.zoom + 2);
         });
+        this.plotPath(this.props);
+    }
+
+    UNSAFE_componentWillUpdate(nextProps) {
+        if (nextProps.location !== this.props.location)
+            this.plotPath(nextProps);
     }
 
     render() {

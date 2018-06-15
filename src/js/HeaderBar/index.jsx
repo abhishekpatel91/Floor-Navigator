@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 import './index.scss';
 
@@ -44,6 +45,7 @@ export default class HeaderBar extends React.PureComponent {
                             <a href="#"><li>About</li></a>
                             <a href="#"><li>Info</li></a>
                             <a href="#"><li>Contact</li></a>
+                            <Link to="/events"><li>Events</li></Link>
                             <a href="https://erikterwan.com/" target="_blank"><li>Show me more</li></a>
                         </ul>
                     </div>

@@ -2,6 +2,7 @@ import path from 'path';
 import webpack from 'webpack';
 import HTMLWebpackPlugin from 'html-webpack-plugin';
 import CleanWebpackPlugin from 'clean-webpack-plugin';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 import FixDefaultImportPlugin from 'webpack-fix-default-import-plugin';
 import merge from 'webpack-merge';
 
@@ -42,6 +43,7 @@ const plugins = [
         root: process.cwd()
     }),
     new FixDefaultImportPlugin(),
+    new CopyWebpackPlugin([{ from: 'src/sw.js', to: '' }, { from: 'src/images', to: 'images' },])
 ];
 
 const common = {
@@ -134,9 +136,9 @@ const devConfig = merge.smart(common, {
         hot: true,
         historyApiFallback: true,
         disableHostCheck: true,
-        host: '0.0.0.0',
+        host: 'localhost',
         inline: true,
-        open: true,
+        open: true
     }
 })
 

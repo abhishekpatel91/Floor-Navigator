@@ -100,19 +100,19 @@ export default class NavigationToolbar extends React.PureComponent {
                     <LeftArrow >
                         <i className="material-icons" onClick={this.props.goBack}>
                             arrow_back
-                    </i>
+                        </i>
                     </LeftArrow>
                     <NavHolder>
                         <NavSection>
                             <i className="material-icons">
                                 my_location
-                        </i>
+                            </i>
                             <NavBox onClick={() => this.editField('from')}>{fromArr && fromArr[1] || 'My Location'}</NavBox>
                         </NavSection>
                         <NavSection>
                             <i className="material-icons">
                                 location_on
-                        </i>
+                            </i>
                             <NavBox onClick={() => this.editField('to')}>{toArr && toArr[1]}</NavBox>
                         </NavSection>
                     </NavHolder>

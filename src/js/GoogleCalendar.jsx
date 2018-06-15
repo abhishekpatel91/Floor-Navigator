@@ -35,27 +35,26 @@ export default class GoogleCalendar extends React.PureComponent {
     updateSigninStatus = (isSignedIn) => {
         if (isSignedIn) {
             console.log('Signed in!');
-            this.listUpcomingEvents()
         } else {
             console.log('Not signed in!');
             gapi.auth2.getAuthInstance().signIn();
         }
     }
 
-    listUpcomingEvents() {
-        gapi.client.calendar.events.list({
-            'calendarId': 'primary',
-            'timeMin': (new Date()).toISOString(),
-            'showDeleted': false,
-            'singleEvents': true,
-            'maxResults': 10,
-            'orderBy': 'startTime'
-        })
-        .then((response) => {
-            var events = response.result.items;
-            console.log(events);
-        });
-    }
+    // listUpcomingEvents() {
+    //     gapi.client.calendar.events.list({
+    //         'calendarId': 'primary',
+    //         'timeMin': (new Date()).toISOString(),
+    //         'showDeleted': false,
+    //         'singleEvents': true,
+    //         'maxResults': 10,
+    //         'orderBy': 'startTime'
+    //     })
+    //     .then((response) => {
+    //         var events = response.result.items;
+    //         console.log(events);
+    //     });
+    // }
 
     render() {
         return null;
