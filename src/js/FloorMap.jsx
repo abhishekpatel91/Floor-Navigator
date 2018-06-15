@@ -1,4 +1,6 @@
 import React from 'react';
+import _ from 'lodash';
+import styled from 'styled-components';
 import floorPlan from './common/floorPlan';
 import Hammer from 'hammerjs';
 
@@ -7,10 +9,49 @@ const pathStyle = {
     'stroke-width': 5
 }
 
+const floorSize = {
+    height: 4040,
+    width: 3335
+};
+
+const leastSize = {
+    height: 404,
+    width: 333
+};
+
+const partitionSize = {
+    height: 363.6,
+    width: 300.2
+};
+
+const ZoomButtons = styled.div`
+    position: fixed;
+    right: 10px;
+    top: 100px;
+
+    .button {
+        padding: 5px;
+        margin: 2px;
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        font-size: 20px;
+        text-align: center;
+        cursor: pointer;
+        background: white;
+        box-shadow: rgba(100, 100, 100, 0.4) 1px 2px 5px 0;
+    }
+`;
+
+const MAX_ZOOM = 10;
+const DEFAULT_ZOOM = 8;
+
 export default class FloorMap extends React.PureComponent {
     constructor(props) {
         super(props);
         this.containerRef = React.createRef();
+        this.setSizeThrottled = _.throttle(this.setSize, 500);
+        this.zoom = DEFAULT_ZOOM;
     }
 
     camelToSentenceCase = (str) => {
@@ -25,7 +66,7 @@ export default class FloorMap extends React.PureComponent {
         );
     }
 
-    createFloorCanvas = (canvas, floorPlan) => {
+    createFloorCanvas = (floorPlan) => {
         const { meta, map } = floorPlan;
         const { color: fillColor, dimensions } = meta;
 
@@ -35,7 +76,7 @@ export default class FloorMap extends React.PureComponent {
             const entityStyle = fillColor[key]
 
             if (key === 'paths') {
-                this.createPaths(canvas, entity, pathStyle);
+                this.createPaths(entity, pathStyle);
             }
 
             entity.forEach(block => {
@@ -43,8 +84,8 @@ export default class FloorMap extends React.PureComponent {
                 const height = block.height || entityDimensions[1];
                 const bgColor = block.color || entityStyle;
 
-                canvas.setStart();
-                canvas
+                this.canvas.setStart();
+                this.canvas
                     .rect(+block.x, +block.y, width, height)
                     .attr({
                         fill: bgColor,
@@ -54,25 +95,25 @@ export default class FloorMap extends React.PureComponent {
                     .click((event) => {
                         this.handleTileClick(event, block, key);
                     });
-                canvas
+                this.canvas
                     .text(parseInt(block.x) + parseInt(width) / 2, parseInt(block.y) + parseInt(height) / 2, `${block.id || ''}`)
                     .attr({ fill: '#000', "font-size": 15, cursor: 'pointer' })
                     .click((event) => {
                         this.handleTileClick(event, block, key);
                     });
-                canvas.setFinish();
+                this.canvas.setFinish();
             });
         }
     }
 
-    createPaths = (canvas, entity, pathStyle) => {
+    createPaths = (entity, pathStyle) => {
         entity.forEach((block) => {
             const x1 = block.x1;
             const x2 = block.x2;
             const y1 = block.y1;
             const y2 = block.y2;
 
-            canvas.path(`M${x1} ${y1}L${x2} ${y2}Z`)
+            this.canvas.path(`M${x1} ${y1}L${x2} ${y2}Z`)
                 .attr(pathStyle);
 
 
@@ -139,9 +180,18 @@ export default class FloorMap extends React.PureComponent {
         }
     }
 
+    setSize = (size) => {
+        this.zoom = Math.min(size, MAX_ZOOM);
+        this.zoom = Math.max(this.zoom, 1);
+        if (this.canvas) {
+            this.canvas.setSize(leastSize.width + (partitionSize.width * this.zoom), leastSize.height + (partitionSize.height * this.zoom));
+        }
+    }
+
     componentDidMount() {
-        const canvas = Raphael(this.containerRef.current, 3335, 4040);
-        this.createFloorCanvas(canvas, floorPlan);
+        this.canvas = Raphael(this.containerRef.current, leastSize.width * MAX_ZOOM, leastSize.height * MAX_ZOOM);
+        this.canvas.setViewBox(0, 0, floorSize.width, floorSize.height, true);
+        this.createFloorCanvas(floorPlan);
 
         this.hammer = new Hammer(this.containerRef.current);
         this.hammer.get('pinch').set({ enable: true });
@@ -158,6 +208,16 @@ export default class FloorMap extends React.PureComponent {
                 this.top = undefined;
             }
         });
+
+        this.hammer.on('pinchin', event => {
+            console.log('pinchin', event.scale, this.zoom);
+            this.setSizeThrottled(this.zoom - 2);
+        });
+
+        this.hammer.on('pinchout', event => {
+            console.log('pinchout', event.scale, this.zoom);
+            this.setSizeThrottled(this.zoom + 2);
+        });
     }
 
     render() {
@@ -165,6 +225,10 @@ export default class FloorMap extends React.PureComponent {
             <React.Fragment>
                 <div className="container" style={{ overflow: 'hidden' }} ref={this.containerRef}>
                 </div>
+                <ZoomButtons>
+                    <div className="button" onClick={() => this.setSize(this.zoom + 1)}>+</div>
+                    <div className="button" onClick={() => this.setSize(this.zoom - 1)}>-</div>
+                </ZoomButtons>
             </React.Fragment>
         );
     }
