@@ -1,10 +1,11 @@
 const floorPlan = {
     'meta': {
         'color': {
-            'workStations': '#E6AA68',
-            'areas': '#FFFBBD',
-            'pantry': '#d6cbd3',
-            'meetingRooms': '#CA3C25'
+            'workStations': '#f7f4da',
+            'areas': '#e9e9e9',
+            'pantry': '#e15f41',
+            'meetingRooms': '#aadbff',
+            'boundary': '#c0ecae'
         },
         'dimensions': {
             'workStations': [106, 93],
@@ -12,7 +13,8 @@ const floorPlan = {
             'pantry': [106, 93],
             'paths': [10, 10],
             'meetingRooms': [293, 233]
-        }
+        },
+        boundary: "M 0 0 L 2378 0 L 2378 1450 L 3335 1450 L 3335 4040 L 0 4040 Z"
     },
     'floor': 7,
     'map': {

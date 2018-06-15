@@ -33,7 +33,7 @@ export default class FloorMap extends React.PureComponent {
     }
 
     createFloorCanvas = (canvas, floorPlan) => {
-        canvas.path('M 0 0 L 2378 0 L 2378 1450 L 3335 1450 L 3335 4040 L 0 4040 Z').attr('fill', '#D8E4BC')
+        canvas.path(floorPlan.meta.boundary).attr('fill', floorPlan.meta.color.boundary);
 
         const { meta, map } = floorPlan;
         const { color: fillColor, dimensions } = meta;
@@ -64,7 +64,7 @@ export default class FloorMap extends React.PureComponent {
                         this.handleTileClick(event, block, key);
                     });
                 canvas
-                    .text(parseInt(block.x) + parseInt(width) / 2, parseInt(block.y) + parseInt(height) / 2, `${block.id || ''}`)
+                    .text(parseInt(block.x) + parseInt(width) / 2, parseInt(block.y) + parseInt(height) / 2, `${block.name || block.id || ''}`)
                     .attr({ fill: '#000', "font-size": 15, cursor: 'pointer' })
                     .click((event) => {
                         this.handleTileClick(event, block, key);
