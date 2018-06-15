@@ -32,6 +32,6 @@ self.addEventListener('notificationclick', function (event) {
     //     }
     // });
     event.waitUntil(
-        clients.openWindow('http://localhost:8083/#page=direction&from=undefined&to=workStations,180')
+        clients.openWindow('http://localhost:8080/#page=direction&from=areas,lift1&to=workStations,180')
     );
 });
