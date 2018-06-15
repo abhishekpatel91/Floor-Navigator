@@ -6,6 +6,13 @@ import floorPlan from '../common/floorPlan';
 import './index.scss';
 const BACKEND_HOST = 'http://localhost:8085';
 
+const blockTypes = {
+    meetingRooms: 'Meeting Room',
+    workStations: 'Work Stations',
+    pantry: 'Pantry',
+    areas: 'Areas'
+}
+
 const Holder = styled.footer`
     background: #fff;
     height: 20vh;
@@ -114,7 +121,8 @@ export default class ActionBar extends React.PureComponent {
             >
                 <Holder>
                     <InfoSection>
-                        {data && (data.name || data.id) && <Name>{data.name || data.id}</Name>}
+                        {data && (data.name || data.id) && <Name><strong>Name: </strong>{data.name || data.id}</Name>}
+                        {type && <AreaType><span>Type: </span>{blockTypes[type]}</AreaType>}
                         {pathLocation.state && pathLocation.state.event &&
                             <AreaType><span>Upcoming Event: </span>{pathLocation.state.event.summary}</AreaType>
                         }
