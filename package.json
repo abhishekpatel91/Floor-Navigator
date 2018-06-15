@@ -13,7 +13,10 @@
   "license": "ISC",
   "dependencies": {
     "babel-polyfill": "^6.26.0",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
     "hammerjs": "^2.0.8",
+    "morgan": "^1.9.0",
     "origamijs": "^0.5.1",
     "query-string": "^6.1.0",
     "react": "^16.4.1",
@@ -23,6 +26,7 @@
     "react-router-dom": "^4.3.1",
     "styled-components": "^3.3.2",
     "velocity-react": "^1.4.1",
+    "web-push": "^3.3.1",
     "why-did-you-update": "^0.1.1"
   },
   "devDependencies": {
@@ -34,6 +38,7 @@
     "babel-preset-stage-2": "^6.24.1",
     "babel-register": "^6.26.0",
     "clean-webpack-plugin": "^0.1.19",
+    "copy-webpack-plugin": "^4.5.1",
     "css-loader": "^0.28.11",
     "file-loader": "^1.1.11",
     "html-webpack-plugin": "^3.2.0",

@@ -9,7 +9,7 @@ import Events from './js/Events';
 import GoogleCalendar from './js/GoogleCalendar';
 
 import 'css/index.scss';
-
+import './registerSW';
 
 const render = () => {
     ReactDOM.render(
