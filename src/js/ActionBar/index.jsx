@@ -4,6 +4,7 @@ import { VelocityComponent } from 'velocity-react';
 import floorPlan from '../common/floorPlan';
 
 import './index.scss';
+const BACKEND_HOST = 'http://localhost:8085';
 
 const Holder = styled.footer`
     background: #fff;
@@ -48,6 +49,11 @@ const DirectionsButton = styled.button`
     right: 0;
     bottom: 0;
 `;
+const BroadcastButton = styled.button`
+    position: absolute;
+    right: 180px;
+    bottom: 0;
+`;
 
 export default class ActionBar extends React.PureComponent {
     state = {
@@ -64,6 +70,22 @@ export default class ActionBar extends React.PureComponent {
 
     openDirections = (type, data) => () => {
         this.props.openDirections(undefined, `${type},${data.id}`);
+    }
+
+    pushNotification = (type, data) => () => {
+        fetch(`${BACKEND_HOST}/push`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: data.id,
+                type
+            })
+        }).then(res => {
+            console.log('Notif sent');
+        })
     }
 
     render() {
@@ -95,6 +117,9 @@ export default class ActionBar extends React.PureComponent {
                         <DirectionsButton type="button" className="material" onClick={this.openDirections(type, data)}>
                             Directions
                         </DirectionsButton>
+                        <BroadcastButton type="button" className="material" onClick={this.pushNotification(type, data)}>
+                            BroadCast
+                        </BroadcastButton>
                     </ActionPanel>
                     <button type="button" className="close" onClick={this.hideBar} />
                 </Holder>

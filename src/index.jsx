@@ -6,7 +6,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import App from './js/App';
 import Search from './js/Search';
 import 'css/index.scss';
-
+import './registerSW';
 
 const render = () => {
     ReactDOM.render(
