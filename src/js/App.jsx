@@ -35,7 +35,8 @@ class App extends React.Component {
     }
 
     goBack = () => {
-        this.props.history.goBack();
+        const { to } = queryString.parse(this.props.location.hash);
+        this.props.history.push(`/#page=location&pin=${to}`);
     }
 
     render() {

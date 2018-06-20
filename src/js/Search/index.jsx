@@ -18,19 +18,37 @@ const Holder = styled.section`
     background: white;
 `;
 
-const SearchInput = styled.input`
+const SearchInputDiv = styled.div`
     background: white;    
     margin: 10px;
     margin-bottom: 0;
     box-sizing: border-box;
-    padding: 12px 16px;
+    padding: 10px 16px;
     border-radius: 3px;
     box-shadow: 0px 2px 12px rgba(0,0,0,0.2);
     border: none;
-    font-size: 16px;
     width: calc(100% - 20px);
     outline: none;
+    display: flex;
+    align-items: center;
     /* padding-left: 30px; */
+`;
+
+const SearchInput = styled.input`
+    border: none;
+    outline: none;
+    font-size: 16px;
+    margin-left: 15px;
+    width: 100%;
+`;
+
+const LeftArrow = styled.div`
+        user-select: none;
+        display: inline-flex;
+        >i {
+            font-size: 22px;
+            cursor: pointer;
+        }
 `;
 
 const RecentSearches = styled.section``;
@@ -98,12 +116,12 @@ export default class NavigationToolbar extends React.PureComponent {
         if (val) {
             const meetingFilterResults = floorPlan.map.meetingRooms.filter(m => m.id.includes(val) || m.name.includes(val));
             if (meetingFilterResults) {
-                searchResults = searchResults.concat(meetingFilterResults.map(res => ({...res, type: 'meetingRooms'})));
+                searchResults = searchResults.concat(meetingFilterResults.map(res => ({ ...res, type: 'meetingRooms' })));
             }
 
             const workstationsFilterResults = floorPlan.map.workStations.filter(m => m.id.includes(val));
             if (workstationsFilterResults) {
-                searchResults = searchResults.concat(workstationsFilterResults.map(res => ({...res, type: 'workStations'})));
+                searchResults = searchResults.concat(workstationsFilterResults.map(res => ({ ...res, type: 'workStations' })));
             }
         }
         this.setState({
@@ -114,21 +132,28 @@ export default class NavigationToolbar extends React.PureComponent {
     render() {
         return (
             <Holder>
-                <SearchInput innerRef={ref => this.searchRef = ref} placeholder="Type meeting room, workstation" onChange={this.handleSearchChange} />
-                {this.state.searchResults.length > 0 && 
+                <SearchInputDiv>
+                    <LeftArrow>
+                        <i className="material-icons" onClick={this.props.onClose}>
+                            arrow_back
+                        </i>
+                    </LeftArrow>
+                    <SearchInput innerRef={ref => this.searchRef = ref} placeholder="Type meeting room, workstation" onChange={this.handleSearchChange} autoFocus />
+                </SearchInputDiv>
+                {this.state.searchResults.length > 0 &&
                     this.state.searchResults.map(res => {
-                    return (
-                        <ListItem key={res.id} onClick={this.handleListItemClick(res.type, res)}>
-                            <p> {res.name || res.id} </p>
-                        </ListItem>
-                    )
-                })}
+                        return (
+                            <ListItem key={res.id} onClick={this.handleListItemClick(res.type, res)}>
+                                <p> {res.name || res.id} </p>
+                            </ListItem>
+                        )
+                    })}
                 {this.state.searchResults.length === 0 && <RecentSearches>
                     <ListItemGroup>
                         <GroupHeader>Recent Searches</GroupHeader>
                         {this.state.recentSearches.map(rs => {
                             return (
-                                <ListItem key={rs.id}  onClick={this.handleListItemClick(rs.type, rs)}>
+                                <ListItem key={rs.id} onClick={this.handleListItemClick(rs.type, rs)}>
                                     <i className="material-icons">
                                         history
                                     </i>

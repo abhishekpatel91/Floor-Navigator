@@ -41,18 +41,16 @@ export default class HeaderBar extends React.PureComponent {
                         <span></span>
                         <span></span>
                         <ul id="menu">
-                            <a href="#"><li>Home</li></a>
+                            <Link to="/"><li>Home</li></Link>
                             <a href="#"><li>About</li></a>
-                            <a href="#"><li>Info</li></a>
-                            <a href="#"><li>Contact</li></a>
                             <Link to="/events"><li>Events</li></Link>
-                            <a href="https://erikterwan.com/" target="_blank"><li>Show me more</li></a>
                         </ul>
                     </div>
                 </HamBurgerMenu>
                 <SearchInput
                     onClick={this.props.onSearchClick}
                     type="search"
+                    autoFocus
                     placeholder="Search workstation, meeting room etc"
                 />
             </Holder>

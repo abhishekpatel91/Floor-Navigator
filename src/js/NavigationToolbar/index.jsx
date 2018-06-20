@@ -7,7 +7,7 @@ import config from '../common/config';
 const Holder = styled.section`
     position: fixed;
     z-index: 4;
-    background: ${config.primaryColor};
+    background: rgba(55, 71, 79, 0.80);
     top: 0;
     left: 0;
     height: 140px;
@@ -22,6 +22,7 @@ const LeftArrow = styled.section`
     padding-top: 20px;
     padding-right: 20px;
     cursor: pointer;
+    user-select: none;
     >i {
         padding: 10px;
         border-radius: 50%;
