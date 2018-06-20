@@ -6,6 +6,15 @@ import floorPlan from './common/floorPlan';
 import Hammer from 'hammerjs';
 import calcShortestPath, { findNearestPath } from './utils/shortestPath';
 
+
+const Pushpin = styled.img`
+    height: 40px;
+    position: fixed;
+    z-index: 2;
+    top: ${props => props.top ? `${props.top}px` : '-100px'};
+    left: ${props => props.left ? `${props.left}px` : '-100px'};
+`;
+
 const pathStyle = {
     'stroke': '#f2f2f2',
     'stroke-width': 25
@@ -63,6 +72,11 @@ export default class FloorMap extends React.PureComponent {
         this.currentRight = 2000;
     }
 
+    state = {
+        top: -100,
+        left: -100
+    }
+
     componentDidMount() {
         this.boundaryCalculation(this.props);
     }
@@ -92,6 +106,10 @@ export default class FloorMap extends React.PureComponent {
     fitBoundary(x, y) {
         this.setZoomSize(4);
         this.moveTo(Math.max(x - (window.innerWidth / 2), 0), Math.max(y - (window.innerHeight / 2), 0));
+        // this.setState({
+        //     top: y,
+        //     left: x,
+        // })
     }
 
     camelToSentenceCase = (str) => {
@@ -100,6 +118,7 @@ export default class FloorMap extends React.PureComponent {
     }
 
     handleTileClick = (event, area, type) => {
+        console.log(event, area);
         this.props.onMapClick(
             type,
             area.id
@@ -168,13 +187,13 @@ export default class FloorMap extends React.PureComponent {
 
     plotPath = (props) => {
         const { from, to } = queryString.parse(props.location.hash);
-        
+
         if (from && to) {
             const fromNode = from.split(',');
             const toNode = to.split(',');
             const startNode = this.findEntity(fromNode[1], floorPlan.map[fromNode[0]]);
-            const endNode = this.findEntity(toNode[1], floorPlan.map[toNode[0]]);            
-            if (startNode && endNode){
+            const endNode = this.findEntity(toNode[1], floorPlan.map[toNode[0]]);
+            if (startNode && endNode) {
                 const calculatedPath = calcShortestPath(
                     findNearestPath(startNode, floorPlan.map.paths),
                     findNearestPath(endNode, floorPlan.map.paths)
@@ -240,6 +259,7 @@ export default class FloorMap extends React.PureComponent {
     render() {
         return (
             <React.Fragment>
+                <Pushpin src='/images/pushpin.svg' top={this.state.top} left={this.state.left} />
                 <div className="container" style={{ overflow: 'hidden' }} ref={this.containerRef}>
                 </div>
                 <ZoomButtons>
