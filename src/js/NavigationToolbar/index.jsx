@@ -116,12 +116,12 @@ export default class NavigationToolbar extends React.PureComponent {
                             <NavBox onClick={() => this.editField('to')}>{toArr && toArr[1]}</NavBox>
                         </NavSection>
                     </NavHolder>
+                    {
+                        this.state.searchOpen ?
+                            <Search onItemSelect={this.redirect} onClose={this.toggleSearch} />
+                            : null
+                    }
                 </Holder>
-                {
-                    this.state.searchOpen ?
-                        <Search onItemSelect={this.redirect} onClose={this.toggleSearch} />
-                        : null
-                }
             </VelocityComponent>
         )
     }

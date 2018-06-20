@@ -49,6 +49,8 @@ app.post('/push', (req, res) => {
     const notification = JSON.stringify({
         title: 'Kamikaze Broadcast',
         body: `Please come to ${type}: ${id}`,
+        type: type,
+        id: id
     });
     webpush.sendNotification(subscription, notification)
         .catch(err => {
