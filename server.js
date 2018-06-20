@@ -30,7 +30,7 @@ app.use(function (req, res, next) {
     next();
 });
 
-let subscription;
+let subscriptions = [];
 
 app.use(express.static(__dirname + '/dist'));
 app.use('/lib', express.static(__dirname + '/lib'));
@@ -40,8 +40,11 @@ app.get('*', function (request, response) {
 });
 
 app.post('/saveSubscriptionToBackend', (req, res) => {
-    subscription = req.body.subscription;
-    console.log(req.body);
+    const sub = req.body.subscription;
+    if (!subscriptions.find(s => s.endpoint === sub.endpoint)) {
+        subscriptions.push(sub);
+    }
+    console.log(subscriptions);
     res.send({ success: true });
 })
 app.post('/push', (req, res) => {
@@ -52,10 +55,11 @@ app.post('/push', (req, res) => {
         type: type,
         id: id
     });
-    webpush.sendNotification(subscription, notification)
-        .catch(err => {
-            console.log(err);
-        });
+    subscriptions.map(subscription => webpush.sendNotification(subscription, notification));
+    // webpush.sendNotification(subscription, notification)
+    //     .catch(err => {
+    //         console.log(err);
+    //     });
     res.send({ success: true });
 })
 
