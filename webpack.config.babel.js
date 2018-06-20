@@ -43,7 +43,7 @@ const plugins = [
         root: process.cwd()
     }),
     new FixDefaultImportPlugin(),
-    new CopyWebpackPlugin([{ from: 'src/sw.js', to: '' }, { from: 'src/images', to: 'images' },])
+    new CopyWebpackPlugin([{ from: 'src/sw.js', to: '' }, { from: 'src/images', to: 'images' }, { from: 'manifest.json', to: '' }])
 ];
 
 const common = {

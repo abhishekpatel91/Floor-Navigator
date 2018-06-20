@@ -3,7 +3,7 @@ let isSubscribed;
 
 const applicationServerPublicKey = 'BBUEMlssXaI6x2Js3qf-RTh_sbHMGD_XCh7bSAYSErLagUo0RuJlItCWOw2zFqPrjdKoV2Z38zgdmWnpO2O3xDM';
 
-const BACKEND_HOST = 'http://localhost:8085';
+const BACKEND_HOST = '';
 function urlB64ToUint8Array(base64String) {
     const padding = '='.repeat((4 - base64String.length % 4) % 4);
     const base64 = (base64String + padding)

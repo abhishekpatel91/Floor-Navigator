@@ -4,7 +4,7 @@ import { VelocityComponent } from 'velocity-react';
 import floorPlan from '../common/floorPlan';
 
 import './index.scss';
-const BACKEND_HOST = 'http://localhost:8085';
+const BACKEND_HOST = '';
 
 const blockTypes = {
     meetingRooms: 'Meeting Room',

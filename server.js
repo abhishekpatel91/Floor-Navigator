@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const webpush = require('web-push');
+const path = require('path');
 
 const app = express();
 
@@ -30,15 +31,20 @@ app.use(function (req, res, next) {
 });
 
 let subscription;
-app.get('/', (req, res) => res.send('Welcome to Apis'));
-app.use(express.static('../dist'));
+
+app.use(express.static(__dirname + '/dist'));
+app.use('/lib', express.static(__dirname + '/lib'));
+
+app.get('*', function (request, response) {
+    response.sendFile(path.resolve(__dirname, './dist/index.html'));
+});
+
 app.post('/saveSubscriptionToBackend', (req, res) => {
     subscription = req.body.subscription;
     console.log(req.body);
     res.send({ success: true });
 })
 app.post('/push', (req, res) => {
-    // const subscription = { "endpoint": "https://fcm.googleapis.com/fcm/send/cHM5VVMKJx8:APA91bGh87QyUwJ45KcSHVZcO9F2fjnNgPIdpmdaITE68rv7Zz2frrHqQSyMNU_BB6916wnqqbtTeIF-q1Hj9w_E6ovecllB4FCj-HtPr-hx37NYPhDZzZ9tJtvFpDRrWM6v8P1XdbI6", "expirationTime": null, "keys": { "p256dh": "BDSDKU_PEatC6hwKgy0Ps-KRvtRp2GPHxWZNN9yrxhwrfbdRAjpNCv4vPKBGC0BqWc6ICncfM9zw7wcFLZH6x5o", "auth": "Mu2sz4V5WETzEONisA8I-g" } };
     const { type, id } = req.body;
     const notification = JSON.stringify({
         title: 'Kamikaze Broadcast',
