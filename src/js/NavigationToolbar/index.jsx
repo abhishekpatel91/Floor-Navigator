@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { VelocityComponent } from 'velocity-react';
 import Search from '../Search';
 import config from '../common/config';
+import floorPlan from '../common/floorPlan';
 
 const Holder = styled.section`
     position: fixed;
@@ -74,6 +75,10 @@ export default class NavigationToolbar extends React.PureComponent {
         this.setState({ type }, this.toggleSearch);
     }
 
+    findEntity = (type, entityId) => {
+        return (floorPlan.map[type] || []).find(entity => entity.id === entityId);
+    }
+
     redirect = (type, id) => {
         const obj = {
             from: this.props.from,
@@ -87,6 +92,8 @@ export default class NavigationToolbar extends React.PureComponent {
         const { from, to } = this.props;
         const fromArr = from && from.split(',');
         const toArr = to && to.split(',');
+        const fromEntity = fromArr && this.findEntity(fromArr[0], fromArr[1]);
+        const toEntity = toArr && this.findEntity(toArr[0], toArr[1]);
         return (
             <VelocityComponent
                 animation={ this.props.page === 'direction' ? {
@@ -108,13 +115,23 @@ export default class NavigationToolbar extends React.PureComponent {
                             <i className="material-icons">
                                 my_location
                             </i>
-                            <NavBox onClick={() => this.editField('from')}>{fromArr && fromArr[1] || 'My Location'}</NavBox>
+                            <NavBox onClick={() => this.editField('from')}>{
+                                (
+                                    fromEntity &&
+                                    (fromEntity.name || fromEntity.id)
+                                ) || (fromArr && fromArr[1]) ||
+                                'My Location'
+                                }</NavBox>
                         </NavSection>
                         <NavSection>
                             <i className="material-icons">
                                 location_on
                             </i>
-                            <NavBox onClick={() => this.editField('to')}>{toArr && toArr[1]}</NavBox>
+                            <NavBox onClick={() => this.editField('to')}>{(
+                                    toEntity &&
+                                    (toEntity.name || toEntity.id)
+                                ) || (toArr && toArr[1])
+                                }</NavBox>
                         </NavSection>
                     </NavHolder>
                 </Holder>

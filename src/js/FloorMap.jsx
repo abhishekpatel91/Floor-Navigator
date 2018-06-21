@@ -6,19 +6,16 @@ import floorPlan from './common/floorPlan';
 import Hammer from 'hammerjs';
 import calcShortestPath, { findNearestPath } from './utils/shortestPath';
 
-
-const Pushpin = styled.img`
-    height: 40px;
-    position: fixed;
-    z-index: 2;
-    top: ${props => props.top ? `${props.top}px` : '-100px'};
-    left: ${props => props.left ? `${props.left}px` : '-100px'};
-`;
-
 const pathStyle = {
     'stroke': '#f2f2f2',
     'stroke-width': 25
 }
+
+const pinStyle = {
+    'stroke': '#B71C1C',
+    'stroke-width': 1,
+    'fill': '#F44336'
+};
 
 const highlightedStye = {
     'stroke': '#2274A5',
@@ -70,42 +67,58 @@ export default class FloorMap extends React.PureComponent {
         this.zoom = DEFAULT_ZOOM;
         this.currentLeft = 1600;
         this.currentRight = 2000;
-    }
-
-    state = {
-        top: -100,
-        left: -100
+        this.pin = null;
     }
 
     componentDidMount() {
         this.boundaryCalculation(this.props);
+        this.setPin(this.props);
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.boundary !== nextProps.boundary) {
+        if (
+            this.props.pin !== nextProps.pin ||
+            this.props.from !== nextProps.from ||
+            this.props.to !== nextProps.to
+        ) {
             this.boundaryCalculation(nextProps);
+            this.setPin(nextProps);
+        }
+    }
+
+    setPin = (props) => {
+        const pin = props.pin || props.to;
+        this.pin && this.pin.remove();
+        if (pin) {
+            const entity = this.getEntityForString(pin);
+            this.pin = this.canvas &&
+                this.canvas.path(this.getPinPath(+entity.x + (entity.width / 2), +entity.y + (entity.height / 2) - 30))
+                    .attr(pinStyle);
         }
     }
 
     boundaryCalculation = (props) => {
         let x = this.currentLeft;
         let y = this.currentRight;
-        if (props.boundary) {
-            const entity = this.getEntityForBoundary(props.boundary);
-            x = entity.x;
-            y = entity.y;
+        const boundary = props.pin || props.from;
+        if (boundary) {
+            const entity = this.getEntityForString(boundary);
+            x = +entity.x + (entity.width / 2);
+            y = +entity.y + (entity.height / 2);
         }
         this.fitBoundary(x, y);
     }
 
-    getEntityForBoundary = (boundary) => {
-        const [type, id] = boundary.split(',');
+    getEntityForString = (pinString) => {
+        const [type, id] = pinString.split(',');
         return this.findEntity(id, floorPlan.map[type]);
     }
 
     fitBoundary(x, y) {
-        this.setZoomSize(4);
-        this.moveTo(Math.max(x - (window.innerWidth / 2), 0), Math.max(y - (window.innerHeight / 2), 0));
+        this.setZoomSize(6);
+        const fittedX = (leastSize.width + (partitionSize.width * this.zoom)) * x / floorSize.width;
+        const fittedY = (leastSize.height + (partitionSize.height * this.zoom)) * y / floorSize.height;
+        this.moveTo(Math.max(fittedX - (window.innerWidth / 2), 0), Math.max(fittedY - (window.innerHeight / 2), 0));
         // this.setState({
         //     top: y,
         //     left: x,
@@ -216,6 +229,11 @@ export default class FloorMap extends React.PureComponent {
         this.containerRef.current.scrollTo(x, y);
     }
 
+    getPinPath(x, y) {
+        return `M${x} ${y}c -3.3120000000000003 0 -6 -2.688 -6 -6 s 2.688 -6 6 -6 6 2.688 6 6 -2.688 6 -6 6 m 0 -15 c -4.971 0 -9 4.029 -9 9 s 4.029 9 9 9 9 -4.029 9 -9 -4.029 -9 -9 -9 m -21 7.805999999999999 c 0 -10.551 9.812999999999999 -19.806 21 -19.806 s 21 9.254999999999999 21 19.806 c 0 10.365 -7.689 22.629 -21 43.580999999999996 -13.466999999999999 -21.219 -21 -33.215999999999994 -21 -43.580999999999996 m 21 -22.806 c -12.594000000000001 0 -24 10.209 -24 22.806 0 12.594000000000001 10.407 27.630000000000003 24 49.194 13.593 -21.564 24 -36.599999999999994 24 -49.194 0 -12.597 -11.403 -22.806 -24 -22.806 Z`;
+        // return `M${x} ${y}c-1.104 0-2-.896-2-2s.896-2 2-2 2 .896 2 2-.896 2-2 2m0-5c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3m-7 2.602c0-3.517 3.271-6.602 7-6.602s7 3.085 7 6.602c0 3.455-2.563 7.543-7 14.527-4.489-7.073-7-11.072-7-14.527m7-7.602c-4.198 0-8 3.403-8 7.602 0 4.198 3.469 9.21 8 16.398 4.531-7.188 8-12.2 8-16.398 0-4.199-3.801-7.602-8-7.602`;
+    }
+
     componentDidMount() {
         this.canvas = Raphael(this.containerRef.current, leastSize.width * MAX_ZOOM, leastSize.height * MAX_ZOOM);
         this.canvas.setViewBox(0, 0, floorSize.width, floorSize.height, true);
@@ -232,8 +250,8 @@ export default class FloorMap extends React.PureComponent {
             this.moveTo(this.left - event.deltaX, this.top - event.deltaY);
 
             if (event.isFinal) {
-                this.currentLeft = this.left;
-                this.currentRight = this.right;
+                this.currentLeft = this.containerRef.current.scrollLeft;
+                this.currentRight = this.containerRef.current.scrollTop;
                 this.left = undefined;
                 this.top = undefined;
             }
@@ -259,7 +277,6 @@ export default class FloorMap extends React.PureComponent {
     render() {
         return (
             <React.Fragment>
-                <Pushpin src='/images/pushpin.svg' top={this.state.top} left={this.state.left} />
                 <div className="container" style={{ overflow: 'hidden' }} ref={this.containerRef}>
                 </div>
                 <ZoomButtons>
