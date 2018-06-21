@@ -194,7 +194,7 @@ export default class NavigationToolbar extends React.PureComponent {
                         <GroupHeader>Workstations</GroupHeader>
                         {floorPlan.map.workStations.map(ws => {
                             return (
-                                <ListItem key={ws.id} onClick={this.handleListItemClick('workstation', ws)}>
+                                <ListItem key={ws.id} onClick={this.handleListItemClick('workStations', ws)}>
                                     <i className="material-icons">
                                         desktop_mac
                                     </i>
